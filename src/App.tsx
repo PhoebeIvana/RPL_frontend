@@ -1,6 +1,9 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainPage from './MainPage.tsx';
+import ProductDetails from './ProductDetails.tsx';
+import AlternativeProducts from './AlternativeProducts.tsx';
+import NoResultMessage from './NoResultMessage.tsx';
 
 function App() {
   return (
@@ -10,7 +13,10 @@ function App() {
       </nav> */}
       <Routes>
         <Route path="/" element={<MainPage />} />
-      </Routes>
+        <Route path="/ProductDetails" element={<ProductDetails />} />      
+        <Route path="/AlternativeProducts" element={<AlternativeProducts />} />      
+        <Route path="/NoResultMessage" element={<NoResultMessage />} />   
+      </Routes>  
     </Router>
   );
 }
