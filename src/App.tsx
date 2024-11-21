@@ -4,6 +4,7 @@ import MainPage from './MainPage.tsx';
 import ProductDetails from './ProductDetails.tsx';
 import AlternativeProducts from './AlternativeProducts.tsx';
 import NoResultMessage from './NoResultMessage.tsx';
+import AddToHistory from './AddToHistory.tsx';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/ProductDetails" element={<ProductDetails />} />      
         <Route path="/AlternativeProducts" element={<AlternativeProducts />} />      
         <Route path="/NoResultMessage" element={<NoResultMessage />} />   
+        <Route path="/AddToHistory" element={<AddToHistory />} />
       </Routes>  
     </Router>
   );
