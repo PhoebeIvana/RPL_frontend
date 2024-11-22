@@ -15,6 +15,8 @@ export default function ProductDetails() {
         {/* Profile Icon */}
         <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
           <div className="border border-text-secondary w-3 h-3 rounded-full"></div>
+          {/*makna:
+          - border border-text-secondary: menambahkan border di sekitar lingkaran*/}
         </div>
       </header>
 
