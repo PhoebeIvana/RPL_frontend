@@ -50,7 +50,7 @@ export default function MainPage() {
 
       {/* Profile Box */}
       {isProfileOpen && (
-        <div className="absolute z-20 bg-tertiary-light w-full max-w-lg rounded-2xl shadow-lg px-6 py-8 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 border border-text-secondary">
+        <div className="absolute z-20 bg-tertiary-light w-full max-w-lg rounded-lg shadow-lg px-6 py-8 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
           {/* Exit Icon */}
           <div
             className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center cursor-pointer"
@@ -76,16 +76,61 @@ export default function MainPage() {
 
           {/* Profile Details */}
           <div className="flex flex-col items-center">
+            {/* Profile Icon */}
             <div className="relative w-16 h-16 rounded-full border-2 border-text-secondary flex items-center justify-center">
+              {/* Head */}
               <div className="absolute top-[15%] w-6 h-6 bg-text-secondary rounded-full"></div>
+              {/* Body */}
               <div className="absolute bottom-[15%] w-8 h-4 bg-text-secondary rounded-t-md"></div>
             </div>
-            <h2 className="text-lg font-bold text-text-primary mt-4">
+
+            {/* Username */}
+            <h2
+              className="text-lg font-bold text-text-primary mt-4"
+              style={{ fontFamily: "Inter" }}
+            >
               Username Anda
             </h2>
-            <p className="text-sm text-text-secondary mt-4 mb-8">
+
+            {/* Created Date */}
+            <p
+              className="text-sm text-text-tertiary mt-4 mb-8"
+              style={{ fontFamily: "Inter" }}
+            >
               Created: 20/11/24
             </p>
+
+            {/* Average Score Box */}
+            <div className="bg-text-white rounded-lg shadow mt-8 mx-24 mb-10 p-6 border border-secondary-700">
+              <h3
+                className="text-sm font-medium text-text-secondary"
+                style={{ fontFamily: "Inter" }}
+              >
+                Average Score
+              </h3>
+              <div className="flex flex-col items-center mt-3">
+                <span
+                  className="text-lg font-bold text-text-tertiary mt-5"
+                  style={{ fontFamily: "Inter" }}
+                >
+                  3.2★
+                </span>
+                <button
+                  className="px-4 py-1 mt-3 bg-tertiary-light border border-secondary-700 text-secondary rounded-md text-sm"
+                  style={{ fontFamily: "Inter" }}
+                >
+                  Details
+                </button>
+              </div>
+            </div>
+
+            {/* Change Profile Button */}
+            <button
+              className="bg-secondary-700 text-text-white py-2 px-20 rounded-xl font-bold mt-8"
+              style={{ fontFamily: "Inter" }}
+            >
+              Change Profile
+            </button>
           </div>
         </div>
       )}
@@ -112,7 +157,7 @@ export default function MainPage() {
                 className="flex justify-between items-center p-4"
               >
                 <div className="ml-6">
-                  <h2 className="text-text-primary font-semibold text-[1.5rem]">
+                  <h2 className="text-text-secondary font-semibold text-[1.5rem]">
                     {product.name}
                   </h2>
                   <div className="flex items-center text-text-secondary mt-1">

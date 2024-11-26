@@ -4,6 +4,7 @@ import MainPage from './MainPage.tsx';
 import ProductDetails from './ProductDetails.tsx';
 import AlternativeProducts from './AlternativeProducts.tsx';
 import AddToHistory from './AddToHistory.tsx';
+import CheckHistory from './CheckHistory.tsx';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/ProductDetails" element={<ProductDetails />} />      
         <Route path="/AlternativeProducts" element={<AlternativeProducts />} />      
         <Route path="/AddToHistory" element={<AddToHistory />} />
+        <Route path="/CheckHistory" element={<CheckHistory />} />
       </Routes>  
     </Router>
   );

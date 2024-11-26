@@ -11,6 +11,14 @@ export default function ProductDetails() {
     }
   };
 
+  const ratings = [
+    { label: "Kategori1", value: 4.38 },
+    { label: "Kategori2", value: 4.0 },
+    { label: "Kategori3", value: 3.5 },
+    { label: "Kategori4", value: 3.8 },
+    { label: "Kategori5", value: 4.1 },
+  ];
+
   return (
     <div className="bg-tertiary-light min-h-screen flex flex-col relative">
       {/* Header */}
@@ -51,7 +59,7 @@ export default function ProductDetails() {
           />
           <div className="flex justify-between items-center">
             <div>
-              <div className="text-text-secondary text-sm">Mi Instan</div>
+              <div className="text-text-primary text-sm">Mi Instan</div>
               <div className="text-text-primary text-xl font-semibold">
                 Indomie Goreng
               </div>
@@ -166,36 +174,34 @@ export default function ProductDetails() {
         {/* Description and Rating Section */}
         <div className="flex gap-4 mb-12 mx-4">
           {/* Product Description */}
-          <div className="bg-white rounded-lg shadow-md p-4 flex-1">
-            <h2 className="text-text-primary text-base font-semibold">
+          <div className="bg-white rounded-lg shadow-md p-6 flex-1">
+            <h2 className="text-text-secondary text-base font-semibold">
               Nama Produk Lengkap Jika Kepanjangan
             </h2>
-            <p className="text-text-secondary text-sm mt-5">
+            <p className="text-text-tertiary text-sm mt-5">
               Lorem ipsum consectetur adipiscing elit...
             </p>
           </div>
 
-          {/* Ratings Section */}
-          <div className="bg-white rounded-lg shadow-md p-4 flex-1 relative">
-            <h2 className="text-text-primary text-base font-semibold">
-              Rating
-            </h2>
-            <div className="absolute top-2 right-2 flex items-center">
-              <span className="text-text-primary text-xl font-bold">4.3</span>
-              <span className="ml-1 text-yellow-500 text-xl">★</span>
+          {/* Rating Section */}
+          <div className="bg-white rounded-lg shadow-md p-6 flex-1 relative flex flex-col justify-between">
+            <div className="flex justify-between items-center">
+              <h2 className="text-text-secondary text-base font-semibold">
+                Rating
+              </h2>
+              <div className="flex items-center">
+                <span className="text-text-primary text-xl font-bold">4.3</span>
+                <span className="ml-1 text-yellow-500 text-xl">★</span>
+              </div>
             </div>
-            <div className="flex items-end justify-between mt-5">
-              {[
-                { label: "Kategori1", value: 4.38 },
-                { label: "Kategori2", value: 4.0 },
-                { label: "Kategori3", value: 3.5 },
-                { label: "Kategori4", value: 3.8 },
-                { label: "Kategori5", value: 4.1 },
-              ].map((rating, index) => (
-                <div key={index} className="text-center">
+            <div className="flex justify-center items-end mt-8">
+              {ratings.map((rating, index) => (
+                <div key={index} className="flex flex-col items-center mx-2">
                   <div
                     className="w-6 bg-secondary-500 rounded"
-                    style={{ height: `${rating.value * 10}px` }}
+                    style={{
+                      height: `${rating.value * 10}px`,
+                    }}
                   ></div>
                   <span className="block mt-2 text-sm text-text-primary font-bold">
                     {rating.value.toFixed(2)}
@@ -222,11 +228,13 @@ export default function ProductDetails() {
           </div>
           <div className="bg-white rounded-lg shadow-md p-4 flex items-center mt-3 mb-2 border border-secondary-500">
             <div className="flex-1">
-              <div className="text-text-primary text-lg font-semibold">
+              <div className="text-text-secondary text-lg font-semibold">
                 Product Title
               </div>
               <div className="flex items-center mt-2">
-                <span className="text-text-primary text-lg font-bold">3.2</span>
+                <span className="text-text-secondary text-lg font-bold">
+                  3.2
+                </span>
                 <span className="ml-1 text-yellow-500">★</span>
               </div>
             </div>

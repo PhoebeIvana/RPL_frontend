@@ -17,6 +17,7 @@ module.exports = {
       'tertiary': '#FFE8D1',
       'black':'#000000',
       'tertiary-light': '#FFF5EB',
+      'text-tertiary':'#999999',
     },
     extend: {},
   },
