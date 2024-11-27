@@ -1,9 +1,14 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
+import config from "../config.ts";
 
 export default function ProductDetails() {
   const [isAddToHistoryOpen, setAddToHistoryOpen] = useState(false);
   const [quantity, setQuantity] = useState(1);
-
+  const location = useLocation();
+  const { product } = location.state || {};
+  const [purchaseMessage, setPurchaseMessage] = useState(null);
   const incrementQuantity = () => setQuantity(quantity + 1);
   const decrementQuantity = () => {
     if (quantity > 0) {
@@ -18,6 +23,35 @@ export default function ProductDetails() {
     { label: "Kategori4", value: 3.8 },
     { label: "Kategori5", value: 4.1 },
   ];
+
+  // Handle Product Purchase
+  const handleBuyProduct = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) throw new Error("User is not authenticated.");
+
+      const response = await axios.post(
+        `${config.API_URL}/buyProduct`,
+        {
+          product_id: product.id,
+          quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setPurchaseMessage(response.data.message);
+      alert("Product successfully added to history!");
+      return true; 
+    } catch (error) {
+      setPurchaseMessage("Failed to purchase the product.");
+      alert("Failed to add product to history. Please try again.");
+      return false;
+    }
+  };
 
   return (
     <div className="bg-tertiary-light min-h-screen flex flex-col relative">
@@ -54,18 +88,22 @@ export default function ProductDetails() {
           </button>
           <img
             src="https://via.placeholder.com/64"
-            alt="Product"
+            alt={product.name}
             className="w-full rounded-lg mb-4"
           />
           <div className="flex justify-between items-center">
             <div>
-              <div className="text-text-primary text-sm">Mi Instan</div>
+              <div className="text-text-primary text-sm">
+                {product.subtitle || "No subtitle"}
+              </div>
               <div className="text-text-primary text-xl font-semibold">
-                Indomie Goreng
+                {product.name}
               </div>
             </div>
             <div className="flex items-center">
-              <span className="text-text-primary text-lg font-bold">4.3</span>
+              <span className="text-text-primary text-lg font-bold">
+                {product.rating}
+              </span>
               <span className="ml-1 text-yellow-500">★</span>
             </div>
           </div>
@@ -114,21 +152,21 @@ export default function ProductDetails() {
               <div className="bg-white rounded-lg shadow-md mt-3 mx-10 mb-4 p-4">
                 <img
                   src="https://via.placeholder.com/64"
-                  alt="Product"
+                  alt={product.name}
                   className="w-full rounded-lg mb-4"
                 />
                 <div className="flex justify-between items-center">
                   <div>
                     <div className="text-text-secondary text-sm">
-                      Product Subtitle
+                      {product.subtitle || "No subtitle"}
                     </div>
                     <div className="text-text-primary text-lg font-semibold">
-                      Product Title
+                      {product.name}
                     </div>
                   </div>
                   <div className="flex items-center">
                     <span className="text-text-primary text-lg font-bold">
-                      4.3
+                      {product.rating}
                     </span>
                     <span className="ml-1 text-yellow-500">★</span>
                   </div>
@@ -163,11 +201,21 @@ export default function ProductDetails() {
               <button
                 className="bg-secondary-700 text-text-white py-2 px-20 rounded-3xl mt-8 mx-24"
                 style={{ fontFamily: "Inter" }}
-                onClick={() => setAddToHistoryOpen(false)}
+                onClick={async () => {
+                  const success = await handleBuyProduct();
+                  if (success) setAddToHistoryOpen(false);
+                }}
               >
                 Add
               </button>
             </div>
+
+            {/* Purchase Message */}
+            {purchaseMessage && (
+              <div className="text-center mt-6 text-secondary-700 font-semibold">
+                {purchaseMessage}
+              </div>
+            )}
           </>
         )}
 
