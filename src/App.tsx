@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import MainPage from './MainPage.tsx';
-import ProductDetails from './ProductDetails.tsx';
-import AlternativeProducts from './AlternativeProducts.tsx';
-import AddToHistory from './AddToHistory.tsx';
-import CheckHistory from './CheckHistory.tsx';
+import MainPage from './page/MainPage.tsx';
+import ProductDetails from './page/ProductDetails.tsx';
+import AlternativeProducts from './page/AlternativeProducts.tsx';
+import AddToHistory from './page/AddToHistory.tsx';
+import CheckHistory from './page/CheckHistory.tsx';
 
 function App() {
   return (
