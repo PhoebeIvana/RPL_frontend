@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import config from "../config.ts";
 import { useNavigate } from "react-router-dom";
+import { getProducts } from "../handler/products.handler.tsx";
 
 export default function MainPage() {
   const [isProfileOpen, setProfileOpen] = useState(false);
@@ -12,15 +13,40 @@ export default function MainPage() {
   const itemsPerPage = 5;
   const navigate = useNavigate();
 
+  const handleLogin = () => {
+    const loginWindow = window.open(
+      `${config.API_URL}/auth/google`,
+      "Login",
+      "width=500,height=600"
+    );
+
+    const receiveMessage = (event) => {
+      if (event.origin !== config.API_URL) return;
+      const { token } = event.data;
+      if (token) {
+        localStorage.setItem("token", token);
+        console.log("Login successful, token:", token);
+      } else {
+        console.log("Login failed or cancelled");
+      }
+      window.removeEventListener("message", receiveMessage);
+      if (loginWindow) {
+        loginWindow.close();
+      }
+    };
+
+    window.addEventListener("message", receiveMessage);
+  };
+
   // Dummy
-  useEffect(() => {
-    const dummyData = Array.from({ length: 25 }, (_, index) => ({
-      id: index + 1,
-      name: `Product ${index + 1}`,
-      rating: (Math.random() * 5).toFixed(1), 
-    }));
-    setProducts(dummyData);
-  }, []);
+  // useEffect(() => {
+  //   const dummyData = Array.from({ length: 25 }, (_, index) => ({
+  //     id: index + 1,
+  //     name: `Product ${index + 1}`,
+  //     rating: (Math.random() * 5).toFixed(1), 
+  //   }));
+  //   setProducts(dummyData);
+  // }, []);
 
   // Fetch User Profile
   useEffect(() => {
@@ -54,7 +80,7 @@ export default function MainPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`${config.API_URL}/products`);
+        const response = await axios.get(`${config.API_URL}/goods`);
         setProducts(response.data.goods);
       } catch (error) {
         console.error("Error fetching products", error);
@@ -66,7 +92,7 @@ export default function MainPage() {
 
   // Filtered and Paginated Products
   const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    product.product_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const idxProducts = filteredProducts.slice(
@@ -94,6 +120,20 @@ export default function MainPage() {
     navigate(`/ProductDetails/${product.id}`, { state: { product } });
   };
 
+  const handleProfileClick = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("Token not found");
+      const response = await axios.get(`${config.API_URL}/user/profile`, {
+        headers: { cookie: `token=${token}` },
+      });
+      setProfile(response.data.user);
+      setProfileOpen(true);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
+
   return (
     <div className="bg-tertiary-light min-h-screen w-screen flex flex-col relative">
       {/* Header */}
@@ -108,7 +148,7 @@ export default function MainPage() {
         {/* Profile Icon */}
         <div
           className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-text-secondary cursor-pointer"
-          onClick={() => setProfileOpen(true)}
+          onClick={handleProfileClick}
         >
           <div className="flex flex-col items-center">
             {/* Head */}
@@ -117,6 +157,14 @@ export default function MainPage() {
             <div className="w-6 h-3 bg-text-secondary mt-1 rounded-t-md"></div>
           </div>
         </div>
+
+        {/* Login Button */}
+        <button
+          onClick={handleLogin}
+          className="bg-secondary-700 text-text-white py-2 px-4 rounded-xl font-bold"
+        >
+          Login
+        </button>
       </header>
 
       {/* Blur Background */}
@@ -222,17 +270,17 @@ export default function MainPage() {
               >
                 <div className="ml-6">
                   <h2 className="text-text-secondary font-semibold text-[1.5rem]">
-                    {product.name}
+                    {product.product_name}
                   </h2>
                   <div className="flex items-center text-text-secondary mt-1">
-                    <span className="text-lg font-bold">{product.rating}</span>
+                    <span className="text-lg font-bold">{product.product_sustainability_rating}</span>
                     <span className="ml-1 text-yellow-500">★</span>
                   </div>
                 </div>
                 <div className="w-24 h-14 rounded-2xl overflow-hidden bg-secondary-300">
                   <img
-                    src="https://via.placeholder.com/64"
-                    alt={product.name}
+                    src={product.product_image || "https://via.placeholder.com/64"}
+                    alt={product.product_name}
                     className="w-full h-full object-cover"
                   />
                 </div>
