@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import config from "../config.ts";
 import { useNavigate } from "react-router-dom";
+import { getProducts } from "../handler/products.handler.tsx";
 
 export default function MainPage() {
   const [isProfileOpen, setProfileOpen] = useState(false);
@@ -278,8 +279,8 @@ export default function MainPage() {
                 </div>
                 <div className="w-24 h-14 rounded-2xl overflow-hidden bg-secondary-300">
                   <img
-                    src="https://via.placeholder.com/64"
-                    alt={product.name}
+                    src={product.product_image || "https://via.placeholder.com/64"}
+                    alt={product.product_name}
                     className="w-full h-full object-cover"
                   />
                 </div>
