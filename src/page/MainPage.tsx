@@ -1,21 +1,97 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import config from "../config.ts";
+import { useNavigate } from "react-router-dom";
 
 export default function MainPage() {
   const [isProfileOpen, setProfileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [profile, setProfile] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const navigate = useNavigate();
 
-  const products = [
-    { name: "Product A", rating: 4.5 },
-    { name: "Product B", rating: 3.8 },
-    { name: "Product C", rating: 4.0 },
-  ];
+  // Dummy
+  useEffect(() => {
+    const dummyData = Array.from({ length: 25 }, (_, index) => ({
+      id: index + 1,
+      name: `Product ${index + 1}`,
+      rating: (Math.random() * 5).toFixed(1), 
+    }));
+    setProducts(dummyData);
+  }, []);
 
+  // Fetch User Profile
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        // API
+        // const token = localStorage.getItem("authToken");
+        // if (!token) throw new Error("Token not found");
+        // const response = await axios.get(`${config.API_URL}/user/profile`, {
+        //   headers: { Authorization: `Bearer ${token}` },
+        // });
+
+        // setProfile(response.data.user);
+
+        // Dummy
+        const dummyProfile = {
+          display_name: "John Doe",
+          created_at: "2024-11-20",
+          sustainability_rating: 4.3,
+        };
+        setProfile(dummyProfile);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  // Fetch Products
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(`${config.API_URL}/products`);
+        setProducts(response.data.goods);
+      } catch (error) {
+        console.error("Error fetching products", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Filtered and Paginated Products
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const idxProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+  // Pagination Handlers
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleProductClick = (product) => {
+    navigate(`/ProductDetails/${product.id}`, { state: { product } });
   };
 
   return (
@@ -45,16 +121,19 @@ export default function MainPage() {
 
       {/* Blur Background */}
       {isProfileOpen && (
-        <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-10" />
+        <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-10"></div>
       )}
 
       {/* Profile Box */}
-      {isProfileOpen && (
+      {isProfileOpen && profile && (
         <div className="absolute z-20 bg-tertiary-light w-full max-w-lg rounded-lg shadow-lg px-6 py-8 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
           {/* Exit Icon */}
           <div
             className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center cursor-pointer"
-            onClick={() => setProfileOpen(false)}
+            onClick={() => {
+              setProfileOpen(false);
+              console.log("Profile Closed:", false);
+            }}
           >
             <div className="w-6 h-6 flex items-center justify-center border-2 border-text-secondary rounded-full">
               <svg
@@ -78,57 +157,41 @@ export default function MainPage() {
           <div className="flex flex-col items-center">
             {/* Profile Icon */}
             <div className="relative w-16 h-16 rounded-full border-2 border-text-secondary flex items-center justify-center">
-              {/* Head */}
               <div className="absolute top-[15%] w-6 h-6 bg-text-secondary rounded-full"></div>
-              {/* Body */}
               <div className="absolute bottom-[15%] w-8 h-4 bg-text-secondary rounded-t-md"></div>
             </div>
 
             {/* Username */}
-            <h2
-              className="text-lg font-bold text-text-primary mt-4"
-              style={{ fontFamily: "Inter" }}
-            >
-              Username Anda
+            <h2 className="text-lg font-bold text-text-primary mt-4">
+              {profile.display_name || "Unknown User"}
             </h2>
 
             {/* Created Date */}
-            <p
-              className="text-sm text-text-tertiary mt-4 mb-8"
-              style={{ fontFamily: "Inter" }}
-            >
-              Created: 20/11/24
+            <p className="text-sm text-text-tertiary mt-4 mb-8">
+              {profile.created_at
+                ? new Date(profile.created_at).toLocaleDateString()
+                : "Unknown Date"}
             </p>
 
             {/* Average Score Box */}
             <div className="bg-text-white rounded-lg shadow mt-8 mx-24 mb-10 p-6 border border-secondary-700">
-              <h3
-                className="text-sm font-medium text-text-secondary"
-                style={{ fontFamily: "Inter" }}
-              >
+              <h3 className="text-sm font-medium text-text-secondary">
                 Average Score
               </h3>
               <div className="flex flex-col items-center mt-3">
-                <span
-                  className="text-lg font-bold text-text-tertiary mt-5"
-                  style={{ fontFamily: "Inter" }}
-                >
-                  3.2★
+                <span className="text-lg font-bold text-text-tertiary mt-5">
+                  {profile.sustainability_rating
+                    ? `${profile.sustainability_rating.toFixed(1)}★`
+                    : "No Score"}
                 </span>
-                <button
-                  className="px-4 py-1 mt-3 bg-tertiary-light border border-secondary-700 text-secondary rounded-md text-sm"
-                  style={{ fontFamily: "Inter" }}
-                >
+                <button className="px-4 py-1 mt-3 bg-tertiary-light border border-secondary-700 text-secondary rounded-md text-sm">
                   Details
                 </button>
               </div>
             </div>
 
             {/* Change Profile Button */}
-            <button
-              className="bg-secondary-700 text-text-white py-2 px-20 rounded-xl font-bold mt-8"
-              style={{ fontFamily: "Inter" }}
-            >
+            <button className="bg-secondary-700 text-text-white py-2 px-20 rounded-xl font-bold mt-8">
               Change Profile
             </button>
           </div>
@@ -148,13 +211,14 @@ export default function MainPage() {
           />
         </div>
 
-        {/* Product List or No Result Message */}
-        {filteredProducts.length > 0 ? (
+        {/* Products List or No Result */}
+        {idxProducts.length > 0 ? (
           <div className="w-full max-w-lg mt-6 bg-white rounded-lg border border-secondary-500 divide-y divide-black">
-            {filteredProducts.map((product, index) => (
+            {idxProducts.map((product) => (
               <div
-                key={index}
+                key={product.id}
                 className="flex justify-between items-center p-4"
+                onClick={() => handleProductClick(product)}
               >
                 <div className="ml-6">
                   <h2 className="text-text-secondary font-semibold text-[1.5rem]">
@@ -175,32 +239,39 @@ export default function MainPage() {
               </div>
             ))}
 
-            {/* Pagination */}
             <div className="flex justify-center items-center border-t border-black mt-2 pt-4 pb-4">
-              {/* Left Arrow */}
+              {/* Pagination Buttons */}
               <button
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
                 className="w-10 h-10 bg-secondary-700 text-tertiary-light rounded-full flex justify-center items-center hover:bg-secondary-800"
-                aria-label="Previous Page"
               >
                 ←
               </button>
 
-              {/* Page Numbers */}
               <div className="flex space-x-4 mx-6">
-                {[1, 2, 3].map((page) => (
+                {Array.from(
+                  { length: totalPages },
+                  (_, index) => index + 1
+                ).map((page) => (
                   <button
                     key={page}
-                    className="px-2 text-secondary-500 border-b-2 border-transparent hover:border-secondary-500 focus:border-secondary-500"
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-2 text-secondary-500 border-b-2 ${
+                      currentPage === page
+                        ? "border-secondary-500"
+                        : "border-transparent"
+                    } hover:border-secondary-500`}
                   >
                     {page}
                   </button>
                 ))}
               </div>
 
-              {/* Right Arrow */}
               <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
                 className="w-10 h-10 bg-secondary-700 text-tertiary-light rounded-full flex justify-center items-center hover:bg-secondary-800"
-                aria-label="Next Page"
               >
                 →
               </button>
@@ -215,7 +286,7 @@ export default function MainPage() {
         )}
       </main>
 
-      {/* Footer Navigation */}
+      {/* Footer */}
       <footer className="bg-tertiary w-screen py-4 flex justify-around mt-[28px] z-30">
         <div className="w-8 h-8 rounded-full border-4 border-secondary-500 flex justify-center items-center"></div>
         <div className="w-8 h-8 rounded-full border-4 border-secondary-500 flex justify-center items-center"></div>
