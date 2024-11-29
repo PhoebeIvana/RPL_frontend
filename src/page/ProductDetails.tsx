@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import config from "../config.ts";
@@ -15,6 +15,23 @@ export default function ProductDetails() {
       setQuantity(quantity - 1);
     }
   };
+
+  useEffect(() => {
+    // call API to get product details
+    const fetchProductDetails = async () => {
+      try {
+        console.log(product.id);
+        const response = await axios.get(
+          `${config.API_URL}/goods/good`,
+          { product.id }
+        );
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchProductDetails();
+  })
 
   const ratings = [
     { label: "Kategori1", value: 4.38 },
